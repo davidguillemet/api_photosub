@@ -1,0 +1,13 @@
+runtime: nodejs
+env: flex
+service: api-photosub
+env_variables:
+  NODE_ENV: production
+  DB_SOCKET_PATH: /cloudsql
+  CLOUD_SQL_CONNECTION_NAME: photosub:europe-west1:photosub
+manual_scaling:
+  instances: 1
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 10
