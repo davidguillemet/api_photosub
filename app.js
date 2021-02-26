@@ -56,10 +56,28 @@ app.route('/image')
     const newImage = req.body;
     try {
         await pool('images').insert(newImage);
-        res.status(200).send(`Successfully inserted image ${newImage.dir}/${newImage.name}`).end();
+        res.status(200).send(`Successfully inserting image ${newImage.path}/${newImage.name}.`).end();
     } catch (err) {
         console.log(err);
-        res.status(500).send(`Error while inserting image ${newImage.dir}/${newImage.name}`).end();
+        res.status(500).send(`Error while inserting image ${newImage.path}/${newImage.name}.`).end();
+    }
+})
+// Delete an image
+.delete(async function (req, res, next) {
+    // {
+    //     name: "DSC_6578.jpg",
+    //     path: "/folder/folder/",
+    // }
+    const imgeToDelete = req.body;
+    try {
+        await pool('images').where({
+            path: imgeToDelete.path,
+            name: imgeToDelete.name
+        }).delete();
+        res.status(200).send(`Successfully deleting image ${imgeToDelete.path}/${imgeToDelete.name}.`).end();
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(`Error while deleting image ${imgeToDelete.path}/${imgeToDelete.name}.`).end();
     }
 });
 
