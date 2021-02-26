@@ -5,8 +5,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { logger, makeExpressLoggerMiddleware } = require('./logger');
 
-// Build express app
-const app = express();
 
 // Get a connection pool for postgreSql
 const pool = require('./database-postgres');
@@ -18,6 +16,9 @@ async function startExpressServer() {
     // A Stackdriver Logging transport will be created automatically
     // and added onto the provided logger.
     const mw = await makeExpressLoggerMiddleware();
+
+    // Build express app
+    const app = express();
 
     app.use(mw);
 
