@@ -67,12 +67,14 @@ async function startExpressServer() {
         //     captionTags: [ "tag1", "tag2", ...]
         // };
         const newImage = req.body;
+        const fileFullPath = `${newImage.path}/${newImage.name}`;
         try {
+            logger.info(`ìnserting new image ${fileFullPath}`);
             await pool('images').insert(newImage);
-            res.status(200).send(`Successfully inserting image ${newImage.path}/${newImage.name}.`).end();
+            res.status(200).send(`Successfully inserting image ${fileFullPath}.`).end();
         } catch (err) {
-            logger.error("Failed to insert image.", err);
-            res.status(500).send(`Error while inserting image ${newImage.path}/${newImage.name}.`).end();
+            logger.error(`Failed to insert image ${fileFullPath}.`, err);
+            res.status(500).send(`Error while inserting image ${fileFullPath}.`).end();
         }
     })
     // Delete an image
@@ -82,15 +84,17 @@ async function startExpressServer() {
         //     path: "/folder/folder/",
         // }
         const imgeToDelete = req.body;
+        const fileFullPath = `${imgeToDelete.path}/${imgeToDelete.name}`;
         try {
+            logger.info(`Deleting image ${fileFullPath}`);
             await pool('images').where({
                 path: imgeToDelete.path,
                 name: imgeToDelete.name
             }).delete();
-            res.status(200).send(`Successfully deleting image ${imgeToDelete.path}/${imgeToDelete.name}.`).end();
+            res.status(200).send(`Successfully deleting image ${fileFullPath}.`).end();
         } catch (err) {
-            logger.error("Failed to remove image.", err);
-            res.status(500).send(`Error while deleting image ${imgeToDelete.path}/${imgeToDelete.name}.`).end();
+            logger.error(`Failed to remove image ${fileFullPath}.`, err);
+            res.status(500).send(`Error while deleting image ${fileFullPath}.`).end();
         }
     });
 

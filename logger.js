@@ -2,16 +2,23 @@ const winston = require('winston');
 const lw = require('@google-cloud/logging-winston');
 
 function createLogginWinston() {
-    const loggingWinston = new lw.LoggingWinston({
-        // TODO : should we remove if env = 'production'
-        projectId: 'photosub',
-        keyFilename: '../gcp/photosub-5c66182af76f.json',
+    let configuration = {
         serviceContext: {
             // required to report logged errors to the Google Cloud Error Reporting console
             service: 'api-photosub'
         },
         prefix: 'api-photosub'
-    });
+    };
+
+    if (process.env.NODE_ENV === 'development') {
+        configuration = {
+            projectId: 'photosub',
+            keyFilename: '../gcp/photosub-5c66182af76f.json',
+            ...configuration
+        }
+    }
+    
+    const loggingWinston = new lw.LoggingWinston(configuration);
 
     return loggingWinston;
 }
@@ -21,9 +28,7 @@ function createLogginWinston() {
 // Logs will be written to: "projects/YOUR_PROJECT_ID/logs/winston_log"
 const logger = winston.createLogger({
     level: 'info',
-    transports: [
-        new winston.transports.Console(),
-    ]
+    transports: [ ]
 });
 
 const loggingWinston = createLogginWinston();
@@ -35,6 +40,8 @@ async function makeExpressLoggerMiddleware() {
 if (process.env.NODE_ENV === 'production') {
     // Add Stackdriver Logging
     logger.add(loggingWinston);
+} else {
+    logger.add(new winston.transports.Console());
 }
 
 module.exports = {
